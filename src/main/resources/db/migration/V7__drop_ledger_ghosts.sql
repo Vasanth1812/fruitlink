@@ -1,0 +1,1 @@
+ALTER TABLE ledger_entry DROP COLUMN IF EXISTS type;
