@@ -31,6 +31,7 @@ public class ShopDto {
         private String gstin;
         @PositiveOrZero(message = "Credit limit cannot be negative")
         private Long creditLimit;
+        private String routeId;
     }
 
     @Data
@@ -52,6 +53,7 @@ public class ShopDto {
         private String gstin;
         private String status;
         private Long creditLimit;
+        private String routeId;
         private String assignedSalesmanId;
         private String assignedSalesmanName;
         private Instant createdAt;

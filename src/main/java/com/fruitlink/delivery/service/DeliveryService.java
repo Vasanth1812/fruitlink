@@ -1,7 +1,7 @@
 package com.fruitlink.delivery.service;
 
-import com.fruitlink.assets.entity.CrateTransaction;
-import com.fruitlink.assets.repository.CrateTransactionRepository;
+import com.fruitlink.crates.service.CrateService;
+import com.fruitlink.crates.dto.CrateDto.RecordTransactionRequest;
 import com.fruitlink.auth.entity.User;
 import com.fruitlink.auth.repository.UserRepository;
 import com.fruitlink.common.BusinessException;
@@ -33,7 +33,7 @@ public class DeliveryService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ShopRepository shopRepository;
-    private final CrateTransactionRepository crateTransactionRepository;
+    private final CrateService crateService;
 
     // ── Manifest Generation ─────────────────────────────────
 
@@ -116,13 +116,23 @@ public class DeliveryService {
         orderRepository.save(stop.getOrder());
 
         // Update crate ledger
-        if (req.getCratesDelivered() > 0 || req.getCratesReclaimed() > 0) {
-            CrateTransaction ct = new CrateTransaction();
-            ct.setShop(stop.getShop());
-            ct.setManifestStop(stop);
-            ct.setDeliveredCount(req.getCratesDelivered());
-            ct.setReclaimedCount(req.getCratesReclaimed());
-            crateTransactionRepository.save(ct);
+        if (req.getCratesDelivered() > 0) {
+            RecordTransactionRequest issueReq = new RecordTransactionRequest();
+            issueReq.setType("issue");
+            issueReq.setPartyId(stop.getShop().getId().toString());
+            issueReq.setPartyType("shop");
+            issueReq.setQuantity(req.getCratesDelivered());
+            issueReq.setReferenceId(stop.getId().toString());
+            crateService.recordTransaction(issueReq);
+        }
+        if (req.getCratesReclaimed() > 0) {
+            RecordTransactionRequest returnReq = new RecordTransactionRequest();
+            returnReq.setType("return");
+            returnReq.setPartyId(stop.getShop().getId().toString());
+            returnReq.setPartyType("shop");
+            returnReq.setQuantity(req.getCratesReclaimed());
+            returnReq.setReferenceId(stop.getId().toString());
+            crateService.recordTransaction(returnReq);
         }
     }
 

@@ -44,6 +44,9 @@ public class ShopService {
         shop.setAddress(req.getAddress());
         shop.setGstin(req.getGstin());
         shop.setCreditLimit(req.getCreditLimit() != null ? req.getCreditLimit() : 0L);
+        if (req.getRouteId() != null && !req.getRouteId().isBlank()) {
+            shop.setRouteId(UUID.fromString(req.getRouteId()));
+        }
         return toResponse(shopRepository.save(shop));
     }
 
@@ -78,6 +81,7 @@ public class ShopService {
         if (req.getAddress() != null) shop.setAddress(req.getAddress());
         if (req.getGstin() != null) shop.setGstin(req.getGstin());
         if (req.getCreditLimit() != null) shop.setCreditLimit(req.getCreditLimit());
+        if (req.getRouteId() != null) shop.setRouteId(UUID.fromString(req.getRouteId()));
         return toResponse(shopRepository.save(shop));
     }
 
@@ -144,6 +148,9 @@ public class ShopService {
         r.setStatus(s.getStatus());
         r.setCreditLimit(s.getCreditLimit());
         r.setCreatedAt(s.getCreatedAt());
+        if (s.getRouteId() != null) {
+            r.setRouteId(s.getRouteId().toString());
+        }
         if (s.getAssignedSalesman() != null) {
             r.setAssignedSalesmanId(s.getAssignedSalesman().getId().toString());
             r.setAssignedSalesmanName(s.getAssignedSalesman().getFullName());

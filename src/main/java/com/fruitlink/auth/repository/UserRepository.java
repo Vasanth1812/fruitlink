@@ -11,4 +11,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
     boolean existsByPhone(String phone);
     boolean existsByEmail(String email);
+    
+    @org.springframework.data.jpa.repository.Query("SELECT u FROM User u WHERE u.role.name = :roleName")
+    java.util.List<User> findByRoleName(@org.springframework.data.repository.query.Param("roleName") String roleName);
 }
